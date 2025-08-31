@@ -1,0 +1,8 @@
+{
+	"less.compile": {
+		"compress": true, // { boolean }通过删除多余的空白来压缩CSS输出。
+		"sourceMap": false, // { boolean } 启用后，.css.map将以与.css文件相同的方向输出文件
+		"out": "${workspaceRoot}\\", // 指定输出路径
+		"outExt": ".css" // {默认.css}这使您可以指定备用输出文件扩展名(例如.wxss代替.css)
+	}
+}

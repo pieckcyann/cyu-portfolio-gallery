@@ -1,0 +1,215 @@
+// 整体容器
+.ProGallery-Container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(75vw, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+// 每个 block
+.ProGallery-Block {
+    background: transparent;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    // &:hover {
+    //     transform: translateY(-2px);
+    //     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    // }
+}
+
+// 顶部工具栏
+.ProGallery-TopBar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.5rem 1rem;
+
+    .ProGallery-AddButton {
+        background: var(--interactive-accent);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+
+        &:hover {
+            background: var(--interactive-accent-hover);
+        }
+    }
+}
+
+// intro 块（艺术家简介）
+.ProGallery-Block.Intro {
+    position: relative;
+    border: 2px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+
+    .cpb {
+        margin-right: 1rem;
+    }
+
+    .banner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 0; // 默认收起
+        transition: height 0.3s ease;
+    }
+
+    .avatar {
+        position: relative;
+        margin: 10px;
+        z-index: 2;
+
+        img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+    }
+
+    .content {
+        padding: 10px;
+        margin-top: 0;
+        transition: margin-top 0.3s ease;
+
+        .tag {
+            display: inline-block;
+            padding: 2px 6px;
+            margin-right: 6px;
+            border-radius: 6px;
+            background: #eee;
+            font-size: 12px;
+        }
+    }
+
+    &.active {
+        .banner {
+            height: 180px;
+        }
+
+        .content {
+            margin-top: 180px;
+        }
+    }
+
+}
+
+// md 块（评论）
+.ProGallery-MD {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-normal);
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        margin: 0.5rem 0;
+        font-weight: 600;
+    }
+
+    p {
+        margin: 0.5rem 0;
+    }
+}
+
+// works 块（作品）
+.ProGallery-Block.Works {
+
+    &.msnry-col,
+    &.msnry-row {
+        margin-right: -8px;
+        padding: 0;
+        box-shadow: none;
+
+        &:has(video) {
+            opacity: 1;
+        }
+
+        >.item {
+            display: block;
+            margin-bottom: 8px;
+            position: absolute;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.1s ease;
+
+            &:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            // will-change: transform;
+            opacity: 0;
+            // transform: translateY(0);
+
+
+            &.is-visible {
+                opacity: 1;
+                // transform: translateY(50px);
+                // animation: float-up 0.8s ease forwards; // 从 50px 底部抽上来
+
+                @keyframes float-up {
+                    from {
+                        opacity: 0;
+                        // transform: translateY(50px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        // transform: translateY(0);
+                    }
+                }
+            }
+
+            >.image,
+            >.video {
+                mix-blend-mode: normal;
+                border-radius: 5px;
+                display: block;
+                width: 100%;
+            }
+        }
+    }
+
+    // 瀑布流
+    &.msnry-col {
+        >.item {
+            width: 19.5%;
+        }
+    }
+
+    &.msnry-row {
+        >.item {
+            width: 49.7%;
+            width: 49%;
+        }
+    }
+
+    .ProGallery-WorksGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+
+            &:hover {
+                transform: scale(1.03);
+            }
+        }
+    }
+}
