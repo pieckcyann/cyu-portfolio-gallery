@@ -24,6 +24,7 @@
 	"dependencies": {
 		"@types/imagesloaded": "^4.1.7",
 		"@types/masonry-layout": "^4.2.8",
+		"gray-matter": "^4.0.3",
 		"imagesloaded": "^5.0.0",
 		"masonry-layout": "^4.2.2"
 	}

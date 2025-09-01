@@ -1,5 +1,6 @@
 import { App, TFile, Notice } from "obsidian";
 import { PageData } from "src/data/page-data";
+import matter from "gray-matter";
 
 export class FileUtil {
 	/**
@@ -8,13 +9,8 @@ export class FileUtil {
 	static async loadPageData(app: App, file: TFile): Promise<PageData> {
 		try {
 			const data = await app.vault.read(file);
-			let content = data;
-			// 提取 YAML frontmatter
-			const yamlMatch = /^---\n([\s\S]*?)\n---\n?/.exec(data);
-			if (yamlMatch) {
-				content = data.slice(yamlMatch[0].length);
-			}
-			const json = JSON.parse(content);
+			const { content } = matter(data); // 自动提取 frontmatter
+			const json = JSON.parse(content.trim()); // content 已经是正文部分
 			return PageData.fromJSON(json);
 		} catch (e) {
 			new Notice("❌ 无法解析画廊文件，已返回空页面");
@@ -33,14 +29,14 @@ export class FileUtil {
 	): Promise<void> {
 		try {
 			const data = await app.vault.read(file);
-			let yaml = "";
-			// 提取 YAML frontmatter
-			const yamlMatch = /^---\n([\s\S]*?)\n---\n?/.exec(data);
-			if (yamlMatch) {
-				yaml = yamlMatch[0]; // 包括前后的 ---
-			}
-			const jsonStr = pageData.toJSON();
-			const newContent = yaml + "\n" + jsonStr;
+			const { content, data: frontmatter } = matter(data); // 读取原有 frontmatter
+			const yaml = Object.keys(frontmatter).length
+				? matter.stringify("", frontmatter).split("\n")[0] === "---"
+					? matter.stringify("", frontmatter).replace(/^\n/, "")
+					: matter.stringify("", frontmatter)
+				: "";
+			const jsonStr = JSON.stringify(pageData.toJSON(), null, 2);
+			const newContent = yaml ? yaml + "\n" + jsonStr : jsonStr;
 			await app.vault.modify(file, newContent);
 			new Notice("✅ 画廊已保存");
 		} catch (e) {

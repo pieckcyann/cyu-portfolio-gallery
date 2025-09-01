@@ -15,23 +15,32 @@ export type WorksContent = {
 	items: WorkItem[];
 };
 
-// 每个作品项的类型
-export type WorkItem =
-	| {
-			type: "image";
-			url: string;
-			origin?: string;
-			caption?: string;
-			comment?: string;
-	  }
-	| { type: "card"; front: string; back: string }
-	| { type: "video"; url: string }
-	| { type: "comic"; urls: string[] }; // 漫画多张图片
-
 type GalleryConfig = {
 	masonry: "col" | "row";
 	col_num?: number;
 	row_num?: number;
+};
+
+export type WorkItem =
+	| ({
+			type: "image" | "video";
+			url: string;
+	  } & BaseWorkItem)
+	| ({
+			type: "card";
+			front: string;
+			back: string;
+	  } & BaseWorkItem)
+	| ({
+			type: "comic";
+			urls: string[];
+	  } & BaseWorkItem);
+
+type BaseWorkItem = {
+	origin?: string;
+	caption?: string;
+	comment?: string;
+	extra?: string[];
 };
 
 // 一整个块

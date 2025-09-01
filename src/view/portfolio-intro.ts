@@ -6,6 +6,7 @@ import { MediaData, SrcMediaData } from "src/data/work-dsata";
 import Masonry from "masonry-layout";
 import imagesLoaded from "imagesloaded";
 import { Notice } from "obsidian";
+import { ImageMenuModal } from "./Image-menu-modal";
 
 export const createIntroBlock = (
 	block: Block,
@@ -86,8 +87,8 @@ export const createWorksBlock = (
 	const items: HTMLDivElement[] = [];
 
 	// 先创建所有图片 DOM
-	MediaData.fromWorksContent(intro).forEach((srcData) => {
-		const item = createImage(srcData, container);
+	MediaData.fromWorksContent(intro, view.app).forEach((srcData) => {
+		const item = createImage(srcData, container, view);
 		if (item) items.push(item);
 	});
 
@@ -134,10 +135,12 @@ export const createWorksBlock = (
 
 const createImage = (
 	itemData: SrcMediaData,
-	blockEl: HTMLDivElement
+	blockEl: HTMLDivElement,
+	view: ProGalleryView
 ): HTMLDivElement | undefined => {
 	const container = blockEl.createDiv("item");
 	const image_elem = container.createEl("img");
+
 	const image_data = itemData.image_data;
 	if (!image_data) return;
 
@@ -159,6 +162,13 @@ const createImage = (
 	// imageElem.addEventListener("contextmenu", setContextMenuEventListener);
 	// imageElem.setAttribute("src", "placeholder.jpg"); // 可设置占位图片
 	image_elem.setAttribute("src", image_data.thumb_link);
+	image_elem.setAttribute("loading", "lazy");
+
+	const menuModal = new ImageMenuModal(view.app);
+	image_elem.addEventListener("contextmenu", (evt: MouseEvent) => {
+		evt.preventDefault();
+		menuModal.setImageElem(image_elem).openMenu(evt);
+	});
 
 	// 卡片
 	if (oriSrc.includes("|")) {

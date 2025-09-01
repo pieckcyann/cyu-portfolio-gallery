@@ -1,3 +1,4 @@
+import { App, Notice } from "obsidian";
 import { WorkItem, WorksContent } from "./page-data";
 
 export interface ImageData {
@@ -28,7 +29,8 @@ export class MediaData {
 	}
 
 	static fromWorksContent(
-		content: WorksContent | WorkItem[] | undefined
+		content: WorksContent | WorkItem[] | undefined,
+		app: App
 	): SrcMediaData[] {
 		if (!content) return [];
 
@@ -42,24 +44,31 @@ export class MediaData {
 
 		items.forEach((item: WorkItem) => {
 			switch (item.type) {
-				case "image":
+				case "image": {
+					const url = item.url;
+					let thumb_link = "";
+					let origin_link = "";
+
+					if (url.startsWith("http")) {
+						thumb_link = MediaData.getThumbUrl(url, cloudfareCDN);
+						origin_link = MediaData.getOrigiUrl(url, cloudfareCDN);
+					} else {
+						thumb_link = MediaData.getObResLink(app, url);
+						origin_link = thumb_link;
+					}
+
 					mediaList.push({
 						is_image: true,
 						comment_text: item.comment || null,
 						image_data: {
 							caption_text: item.caption || "",
-							thumb_link: MediaData.getThumbUrl(
-								item.url,
-								cloudfareCDN
-							),
-							origin_link: MediaData.getOrigiUrl(
-								item.url,
-								cloudfareCDN
-							),
+							thumb_link: thumb_link,
+							origin_link: origin_link,
 						},
 						video_data: null,
 					});
 					break;
+				}
 				case "card":
 					mediaList.push({
 						is_image: true,
@@ -113,6 +122,17 @@ export class MediaData {
 
 		return new MediaData(mediaList).mediaList;
 	}
+
+	private static getObResLink = (app: App, link: string): string => {
+		const currentFilePath = app.workspace.getActiveFile()?.path;
+		if (!currentFilePath) return "";
+		const file = app.metadataCache.getFirstLinkpathDest(
+			link,
+			currentFilePath
+		);
+		if (!file) return "";
+		return app.vault.getResourcePath(file).split("?")[0];
+	};
 
 	private static isImgbox = (url: string): boolean => {
 		return url.includes("s2.imgbox.com/");
